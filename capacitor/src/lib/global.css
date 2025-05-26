@@ -1,0 +1,62 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Shared styles for Lobstrack app */
+:root {
+  --accent: #ff6666;
+  --card-bg: #fff;
+  --bg: #f6f8fa;
+  --border: #e0e4ea;
+  --radius: 0.75rem;
+  --text: #222;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  padding: 1rem;
+}
+
+h1, h2, h3 {
+  color: var(--accent);
+  font-weight: 600;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+button:hover {
+  background: #17405e;
+}
+input[type="text"] {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  outline: none;
+}
+input[type="text"]:focus {
+  border-color: var(--accent);
+}
+.action-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+  background: var(--card-bg);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+}
