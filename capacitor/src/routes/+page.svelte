@@ -1,2 +1,17 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<h1>
+    Lobstrack
+</h1>
+
+<h2>Recents</h2>
+<!-- Placeholder -->
+
+<h2>Actions</h2>
+<button>Browse</button>
+<button>Scan Multiple</button>
+<button>Print Labels</button>
+
+<div>
+    <!-- Bottom action bar -->
+    <input type="text" placeholder="Search...">
+    <button>Scan QR</button>
+</div>
