@@ -6,6 +6,7 @@ export const load: PageLoad = async ({ params }) => {
   let item = null;
   let locationHierarchy = [];
   let error: string | null = null;
+  let children = [];
 
   const { data, error: err } = await supabase
     .from('items')
@@ -20,7 +21,14 @@ export const load: PageLoad = async ({ params }) => {
     if (!hierErr && hierarchy) {
       locationHierarchy = hierarchy.reverse();
     }
+    // Fetch children
+    const { data: childData, error: childErr } = await supabase
+      .from('items')
+      .select('id, name, parent')
+      .eq('parent', id);
+    if (!childErr && childData) {
+      children = childData;
+    }
   }
-  console.log('hi')
-  return { item, locationHierarchy, error };
+  return { item, locationHierarchy, error, children };
 };

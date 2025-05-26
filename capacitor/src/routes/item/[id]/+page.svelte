@@ -10,11 +10,12 @@
     parent: string | null;
   };
 
-  export let data: { item: Item | null; locationHierarchy: Item[]; error: string | null };
+  export let data: { item: Item | null; locationHierarchy: Item[]; error: string | null; children: Item[] };
 
   $: item = data.item;
   $: locationHierarchy = data.locationHierarchy;
   $: error = data.error;
+  $: children = data.children;
 </script>
 
 <main>
@@ -30,7 +31,7 @@
           {#each locationHierarchy as loc, i (loc.id)}
             <li>
               {#if i < locationHierarchy.length - 1}
-                <a href={`/item/${loc.id}`} style="color: var(--accent); text-decoration: underline;">{loc.name}</a> &gt;
+                <a href={`/item/${loc.id}`}>{loc.name}</a> &gt;
               {:else}
                 <strong>{loc.name}</strong>
               {/if}
@@ -38,6 +39,17 @@
           {/each}
         </ol>
       </nav>
+    </Card>
+    <Card title="Children">
+      {#if children.length > 0}
+        <ul>
+          {#each children as child}
+            <li><a href={`/item/${child.id}`}>{child.name}</a></li>
+          {/each}
+        </ul>
+      {:else}
+        <em>No child items.</em>
+      {/if}
     </Card>
     <Card title="Comments">
       <ul>
