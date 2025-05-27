@@ -5,6 +5,7 @@
   import type { PageLoad } from './$types';
   import HierarchyBrowser from '$lib/HierarchyBrowser.svelte';
     import { invalidateAll } from '$app/navigation';
+  import Sqids from 'sqids';
 
   type Item = {
     id: string;
@@ -23,6 +24,11 @@
   let moveError: string | null = null;
   let moveLoading = false;
   let selectedParentId: string | null = null;
+
+  let showLinkPointer = false;
+  let pointerInput = '';
+  let linkLoading = false;
+  let linkError: string | null = null;
 
   async function handleMove(newParent: Item) {
     moveLoading = true;
@@ -44,6 +50,31 @@
         showMove = false;
     }
     moveLoading = false;
+  }
+
+  async function handleLinkPointer() {
+    linkLoading = true;
+    linkError = null;
+    try {
+      // Extract code from input (allow full URL or just code)
+      let code = pointerInput.trim();
+      const match = code.match(/([A-Za-z0-9]+)$/);
+      if (!match) throw new Error('Invalid code or URL');
+      code = match[1];
+      const sqids = new Sqids();
+      const [pointerId] = sqids.decode(code);
+      if (!pointerId) throw new Error('Invalid code');
+      // Update pointer to link to this item
+      const { error: updateErr } = await supabase
+        .from('pointers')
+        .update({ item: item.id })
+        .eq('id', pointerId);
+      if (updateErr) throw new Error(updateErr.message);
+      showLinkPointer = false;
+    } catch (e) {
+      linkError = e.message || 'Failed to link pointer.';
+    }
+    linkLoading = false;
   }
 </script>
 
@@ -87,6 +118,7 @@
     </Card>
     <div class="action-bar">
       <button on:click={() => showMove = !showMove}>Move</button>
+      <button on:click={() => showLinkPointer = !showLinkPointer}>Link QR</button>
       <button>Checkout</button>
     </div>
     {#if showMove}
@@ -110,6 +142,23 @@
           </div>
           {#if moveError}
             <p style="color: red">{moveError}</p>
+          {/if}
+        </div>
+      </div>
+    {/if}
+    {#if showLinkPointer}
+      <div class="move-modal">
+        <div class="modal-content">
+          <h3>Link QR Code / Pointer</h3>
+          <input type="text" placeholder="Enter code or URL" bind:value={pointerInput} style="width: 100%; margin-bottom: 1em;" />
+          <div style="margin-top: 1em; display: flex; gap: 1em;">
+            <button on:click={handleLinkPointer} disabled={linkLoading || !pointerInput}>
+              {linkLoading ? 'Linking...' : 'Link'}
+            </button>
+            <button on:click={() => showLinkPointer = false} disabled={linkLoading}>Cancel</button>
+          </div>
+          {#if linkError}
+            <p style="color: red">{linkError}</p>
           {/if}
         </div>
       </div>
