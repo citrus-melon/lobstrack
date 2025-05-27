@@ -65,11 +65,12 @@
       const [pointerId] = sqids.decode(code);
       if (!pointerId) throw new Error('Invalid code');
       // Update pointer to link to this item
-      const { error: updateErr } = await supabase
+      const { error: updateErr, count } = await supabase
         .from('pointers')
-        .update({ item: item.id })
+        .update({ item: item.id }, { count: 'exact'})
         .eq('id', pointerId);
       if (updateErr) throw new Error(updateErr.message);
+      if (count === 0) throw new Error('Pointer not found');
       showLinkPointer = false;
     } catch (e) {
       linkError = e.message || 'Failed to link pointer.';
