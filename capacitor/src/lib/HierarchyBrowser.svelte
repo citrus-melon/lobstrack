@@ -2,14 +2,18 @@
   import { supabase } from '$lib/supabase';
   import { onMount } from 'svelte';
   import type { Tables } from './database.types';
-  export let selectedId: string | null = null;
-  export let onSelect: (item: Tables<"items">) => void;
-  export let rootId: string | null = null; // Optionally start from a specific root
+  interface Props {
+    selectedId?: string | null;
+    onSelect: (item: Tables<"items">) => void;
+    rootId?: string | null; // Optionally start from a specific root
+  }
 
-  let loading = false;
-  let error: string | null = null;
-  let items: Tables<"items">[] = [];
-  let path: Tables<"items">[] = [];
+  let { selectedId = $bindable(null), onSelect, rootId = null }: Props = $props();
+
+  let loading = $state(false);
+  let error: string | null = $state(null);
+  let items: Tables<"items">[] = $state([]);
+  let path: Tables<"items">[] = $state([]);
   let currentParent: string | null = rootId ?? null;
 
   async function fetchChildren(parent: string | null) {
@@ -60,7 +64,7 @@
 
 <div class="hierarchy-browser">
   <div class="path">
-    <button on:click={goUp} disabled={path.length === 0}>⬆ Up</button>
+    <button onclick={goUp} disabled={path.length === 0}>⬆ Up</button>
     {#each path as p, i}
       <span>{p.name}{#if i < path.length - 1} &nbsp;/&nbsp;{/if}</span>
     {/each}
@@ -75,12 +79,12 @@
         <li>
           <button
             class:selected={item.id === selectedId}
-            on:click={() => select(item)}
+            onclick={() => select(item)}
             style="font-weight: {item.id === selectedId ? 'bold' : 'normal'}"
           >
             {item.name}
           </button>
-          <button on:click={() => goTo(item)} title="Browse into">➡</button>
+          <button onclick={() => goTo(item)} title="Browse into">➡</button>
         </li>
       {/each}
       {#if items.length === 0}

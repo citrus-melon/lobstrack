@@ -1,7 +1,12 @@
 <!-- Shared Card component for displaying sections -->
 <script lang="ts">
-  export let title = '';
-  export let actions: {onClick: () => {}, label: string}[] = [];
+  interface Props {
+    title?: string;
+    actions?: {onClick: () => {}, label: string}[];
+    children?: import('svelte').Snippet;
+  }
+
+  let { title = '', actions = [], children }: Props = $props();
 </script>
 
 <section class="card">
@@ -9,12 +14,12 @@
     <header><h2>{title}</h2></header>
   {/if}
   <div class="content">
-    <slot />
+    {@render children?.()}
   </div>
   {#if actions.length}
     <footer>
       {#each actions as action}
-        <button on:click={action.onClick}>{action.label}</button>
+        <button onclick={action.onClick}>{action.label}</button>
       {/each}
     </footer>
   {/if}

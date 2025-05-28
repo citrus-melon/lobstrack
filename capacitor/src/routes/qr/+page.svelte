@@ -3,11 +3,11 @@ import { supabase } from '$lib/supabase';
 import '$lib/global.css';
 import { sqids } from '$lib/sqids';
 
-let count = 20;
-let generating = false;
-let error: string | null = null;
-let pointers: { id: number }[] = [];
-let generated = false;
+let count = $state(20);
+let generating = $state(false);
+let error: string | null = $state(null);
+let pointers: { id: number }[] = $state([]);
+let generated = $state(false);
 
 async function generatePointers() {
   generating = true;
@@ -37,7 +37,7 @@ function getQrUrl(id: number) {
 
 <main>
   <h1 class="qr-heading">Bulk QR Code Generator</h1>
-  <form on:submit|preventDefault={generatePointers} style="margin-bottom: 1.5em;">
+  <form onsubmit={(e) => {e.preventDefault(); generatePointers()}} style="margin-bottom: 1.5em;">
     <label>
       Number of QR codes to generate:
       <input type="number" min="1" max="100" bind:value={count} />
@@ -52,7 +52,7 @@ function getQrUrl(id: number) {
     <span>Generated {pointers.length} QR codes on {new Date().toLocaleString()}</span>
   </div>
   <div class="print-controls">
-    <button on:click={() => window.print()}>Print</button>
+    <button onclick={() => window.print()}>Print</button>
   </div>
     <div class="qr-grid">
       {#each pointers as pointer}
