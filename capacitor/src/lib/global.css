@@ -37,14 +37,14 @@ button {
 button:hover {
   background: #17405e;
 }
-input[type="text"] {
+input {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 0.5rem 1rem;
   font-size: 1rem;
   outline: none;
 }
-input[type="text"]:focus {
+input:focus {
   border-color: var(--accent);
 }
 .action-bar {
