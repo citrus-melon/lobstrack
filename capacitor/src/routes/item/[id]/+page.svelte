@@ -4,7 +4,7 @@
   import { supabase } from '$lib/supabase';
   import type { PageLoad } from './$types';
   import HierarchyBrowser from '$lib/HierarchyBrowser.svelte';
-    import { invalidateAll } from '$app/navigation';
+  import { invalidateAll } from '$app/navigation';
   import Sqids from 'sqids';
 
   type Item = {
@@ -30,6 +30,7 @@
   let linkLoading = false;
   let linkError: string | null = null;
 
+  // --- Move logic ---
   async function handleMove(newParent: Item) {
     moveLoading = true;
     moveError = null;
@@ -46,28 +47,30 @@
     if (updateErr) {
       moveError = updateErr.message;
     } else {
-        invalidateAll();
-        showMove = false;
+      showMove = false;
+      await invalidateAll();
     }
     moveLoading = false;
   }
 
+  // --- Link pointer logic ---
   async function handleLinkPointer() {
     linkLoading = true;
     linkError = null;
     try {
       // Extract code from input (allow full URL or just code)
       let code = pointerInput.trim();
+      // Accept either a full URL or just the code
       const match = code.match(/([A-Za-z0-9]+)$/);
       if (!match) throw new Error('Invalid code or URL');
       code = match[1];
       const sqids = new Sqids();
       const [pointerId] = sqids.decode(code);
       if (!pointerId) throw new Error('Invalid code');
-      // Update pointer to link to this item
+      // Update pointer to link to this item, and check if pointer exists
       const { error: updateErr, count } = await supabase
         .from('pointers')
-        .update({ item: item.id }, { count: 'exact'})
+        .update({ item: item.id }, { count: 'exact' })
         .eq('id', pointerId);
       if (updateErr) throw new Error(updateErr.message);
       if (count === 0) throw new Error('Pointer not found');
