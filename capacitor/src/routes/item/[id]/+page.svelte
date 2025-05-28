@@ -2,22 +2,19 @@
   import Card from '$lib/Card.svelte';
   import '$lib/global.css';
   import { supabase } from '$lib/supabase';
-  import type { PageLoad } from './$types';
   import HierarchyBrowser from '$lib/HierarchyBrowser.svelte';
   import { invalidateAll } from '$app/navigation';
   import Sqids from 'sqids';
+  import type { Tables } from '$lib/database.types';
 
-  type Item = {
-    id: string;
-    name: string;
-    parent: string | null;
+  export let data: {
+    item: Tables<"items">;
+    locationHierarchy: Tables<"items">[];
+    children: Tables<"items">[];
   };
-
-  export let data: { item: Item | null; locationHierarchy: Item[]; error: string | null; children: Item[] };
 
   $: item = data.item;
   $: locationHierarchy = data.locationHierarchy;
-  $: error = data.error;
   $: children = data.children;
 
   let showMove = false;
@@ -31,18 +28,18 @@
   let linkError: string | null = null;
 
   // --- Move logic ---
-  async function handleMove(newParent: Item) {
+  async function handleMove(newParentId: string) {
     moveLoading = true;
     moveError = null;
     // Prevent moving to self or current parent
-    if (!item || newParent.id === item.id || newParent.id === item.parent) {
+    if (newParentId === item.id || newParentId === item.parent) {
       moveError = 'Invalid parent selection.';
       moveLoading = false;
       return;
     }
     const { error: updateErr } = await supabase
       .from('items')
-      .update({ parent: newParent.id })
+      .update({ parent: newParentId })
       .eq('id', item.id);
     if (updateErr) {
       moveError = updateErr.message;
@@ -75,7 +72,7 @@
       if (updateErr) throw new Error(updateErr.message);
       if (count === 0) throw new Error('Pointer not found');
       showLinkPointer = false;
-    } catch (e) {
+    } catch (e: any) {
       linkError = e.message || 'Failed to link pointer.';
     }
     linkLoading = false;
@@ -83,10 +80,8 @@
 </script>
 
 <main>
-  {#if !item && !error}
+  {#if !item}
     <p>Loading...</p>
-  {:else if error}
-    <p style="color: red">{error}</p>
   {:else}
     <h1>{item.name}</h1>
     <Card title="Location">
@@ -126,7 +121,7 @@
       <button>Checkout</button>
     </div>
     {#if showMove}
-      <div class="move-modal">
+      <div class="modal">
         <div class="modal-content">
           <h3>Select new parent location</h3>
           <HierarchyBrowser
@@ -136,8 +131,7 @@
           <div style="margin-top: 1em; display: flex; gap: 1em;">
             <button on:click={async () => {
               if (selectedParentId) {
-                const parentItem = { id: selectedParentId };
-                await handleMove(parentItem);
+                await handleMove(selectedParentId);
               }
             }} disabled={!selectedParentId || moveLoading}>
               {moveLoading ? 'Moving...' : 'Move Here'}
@@ -151,7 +145,7 @@
       </div>
     {/if}
     {#if showLinkPointer}
-      <div class="move-modal">
+      <div class="modal">
         <div class="modal-content">
           <h3>Link QR Code / Pointer</h3>
           <input type="text" placeholder="Enter code or URL" bind:value={pointerInput} style="width: 100%; margin-bottom: 1em;" />
@@ -171,20 +165,4 @@
 </main>
 
 <style>
-.move-modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-.modal-content {
-  background: #fff;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  min-width: 350px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-}
 </style>

@@ -1,12 +1,12 @@
 import type { PageLoad } from './$types';
 import { supabase } from '$lib/supabase';
+import type { Tables } from '$lib/database.types';
 
 export const load: PageLoad = async ({ params }) => {
   const id = params.id;
   let item = null;
-  let locationHierarchy = [];
-  let error: string | null = null;
-  let children = [];
+  let locationHierarchy: Partial<Tables<"items">>[] = [];
+  let children: Partial<Tables<"items">>[] = [];
 
   const { data, error: err } = await supabase
     .from('items')
@@ -14,7 +14,7 @@ export const load: PageLoad = async ({ params }) => {
     .eq('id', id)
     .single();
   if (err) {
-    error = err.message;
+    throw new Error(err.message);
   } else {
     item = data;
     const { data: hierarchy, error: hierErr } = await supabase.rpc('get_item_hierarchy', { item_id: id });
@@ -30,5 +30,5 @@ export const load: PageLoad = async ({ params }) => {
       children = childData;
     }
   }
-  return { item, locationHierarchy, error, children };
+  return { item, locationHierarchy, children };
 };

@@ -1,8 +1,7 @@
 <script lang="ts">
-import { onMount } from 'svelte';
 import { supabase } from '$lib/supabase';
-import Sqids from 'sqids';
 import '$lib/global.css';
+import { sqids } from '$lib/sqids';
 
 let count = 20;
 let generating = false;
@@ -24,14 +23,13 @@ async function generatePointers() {
     if (insertErr) throw new Error(insertErr.message);
     pointers = data;
     generated = true;
-  } catch (e) {
+  } catch (e: any) {
     error = e.message || 'Failed to generate QR codes.';
   }
   generating = false;
 }
 
 function getQrUrl(id: number) {
-  const sqids = new Sqids();
   const code = sqids.encode([id]);
   return `${location.origin}/qr/${code}`;
 }
@@ -99,7 +97,7 @@ function getQrUrl(id: number) {
   text-align: center;
 }
 @media print {
-  body { background: #fff; }
+  :global(body) { background: #fff; }
   .print-controls, form, .qr-heading { display: none !important; }
   .qr-meta { margin-bottom: 0.5em; }
   .qr-grid { gap: 0.5em; }

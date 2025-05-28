@@ -1,7 +1,7 @@
 <!-- Shared Card component for displaying sections -->
-<script>
+<script lang="ts">
   export let title = '';
-  export let actions = [];
+  export let actions: {onClick: () => {}, label: string}[] = [];
 </script>
 
 <section class="card">

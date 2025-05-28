@@ -1,20 +1,15 @@
 <script lang="ts">
   import { supabase } from '$lib/supabase';
   import { onMount } from 'svelte';
+  import type { Tables } from './database.types';
   export let selectedId: string | null = null;
-  export let onSelect: (item: any) => void;
+  export let onSelect: (item: Tables<"items">) => void;
   export let rootId: string | null = null; // Optionally start from a specific root
-
-  type Item = {
-    id: string;
-    name: string;
-    parent: string | null;
-  };
 
   let loading = false;
   let error: string | null = null;
-  let items: Item[] = [];
-  let path: Item[] = [];
+  let items: Tables<"items">[] = [];
+  let path: Tables<"items">[] = [];
   let currentParent: string | null = rootId ?? null;
 
   async function fetchChildren(parent: string | null) {
@@ -22,7 +17,7 @@
     error = null;
     let query = supabase
       .from('items')
-      .select('id, name, parent');
+      .select('*');
     if (parent === null) {
       query = query.is('parent', null);
     } else {
@@ -38,7 +33,7 @@
     loading = false;
   }
 
-  async function goTo(item: Item) {
+  async function goTo(item: Tables<'items'>) {
     // Add to path and fetch children
     path = [...path, item];
     currentParent = item.id;
@@ -53,7 +48,7 @@
     }
   }
 
-  function select(item: Item) {
+  function select(item: Tables<'items'>) {
     selectedId = item.id;
     onSelect?.(item);
   }

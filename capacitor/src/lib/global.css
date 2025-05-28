@@ -1,7 +1,7 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* Shared styles for Lobstrack app */
@@ -61,5 +61,22 @@ input:focus {
   width: 100%;
 }
 a {
-    color: var(--accent);
+  color: var(--accent);
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  min-width: 350px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
