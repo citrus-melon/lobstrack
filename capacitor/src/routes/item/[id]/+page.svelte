@@ -188,10 +188,13 @@
     {#if showLinkPointer}
       <div class="modal">
         <div class="modal-content">
-          <h3>Link QR Code / Pointer</h3>
-          <button onclick={handleScanToLinkPointer}>Scan</button> or
+          <h3 style="margin-bottom: 1em">Link QR Code / Pointer</h3>
+          <div style="text-align: center">
+            <button onclick={handleScanToLinkPointer} style="margin-bottom: .5rem">Scan</button>
+            <p style="margin-bottom: .5rem">or</p>
+          </div>
           <input type="text" placeholder="Enter code or URL" bind:value={pointerInput} style="width: 100%; margin-bottom: 1em;" />
-          <div style="margin-top: 1em; display: flex; gap: 1em;">
+          <div style="display: flex; gap: 1em;">
             <button onclick={handleLinkPointer} disabled={linkLoading || !pointerInput}>
               {linkLoading ? 'Linking...' : 'Link'}
             </button>
@@ -205,6 +208,3 @@
     {/if}
   {/if}
 </main>
-
-<style>
-</style>

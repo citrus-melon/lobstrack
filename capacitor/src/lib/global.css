@@ -2,6 +2,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Shared styles for Lobstrack app */
@@ -85,7 +86,7 @@ a {
   background: #fff;
   border-radius: 0.75rem;
   padding: 2rem;
-  min-width: 350px;
+  margin: 2rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
 ol, ul {
