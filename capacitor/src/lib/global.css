@@ -65,6 +65,8 @@ input:focus {
   left: 0;
   z-index: 10;
   width: 100%;
+  overflow: auto;
+  white-space: nowrap;
 }
 a {
   color: var(--accent);

@@ -5,7 +5,9 @@
   import HierarchyBrowser from '$lib/HierarchyBrowser.svelte';
   import { invalidateAll } from '$app/navigation';
   import Sqids from 'sqids';
+  import { BarcodeFormat, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
   import type { PageProps } from './$types';
+    import { sqids } from '$lib/sqids';
 
   let { data }: PageProps = $props();
 
@@ -42,6 +44,35 @@
     moveLoading = false;
   }
 
+  // --- Scan Move logic ---
+  async function handleScanMove() {
+    showMove = true;
+    moveLoading = true;
+    moveError = null;
+    try {
+      const result = await BarcodeScanner.scan({formats: [BarcodeFormat.QrCode]});
+      const qr = result.barcodes[0];
+      if (!qr?.rawValue) throw new Error('No QR code detected.');
+      // Try to extract a /qr/[code] or just the code
+      const match = qr.rawValue.match(/qr\/([A-Za-z0-9]+)$/) || qr.rawValue.match(/([A-Za-z0-9]+)$/);
+      if (!match) throw new Error('Unrecognized QR code format.');
+      const [pointerId] = sqids.decode(match[1]);
+      if (!pointerId) throw new Error('Invalid QR code');
+      // Lookup pointer to get parent item id
+      const { data: pointer, error: pointerErr } = await supabase
+        .from('pointers')
+        .select('item')
+        .eq('id', pointerId)
+        .single();
+      if (pointerErr || !pointer || !pointer.item) throw new Error('Pointer not found or not linked to an item');
+      // Move this item under the scanned parent
+      await handleMove(pointer.item);
+    } catch (e: any) {
+      moveError = e.message || 'Failed to scan QR code.';
+    }
+    moveLoading = false;
+  }
+
   // --- Link pointer logic ---
   async function handleLinkPointer() {
     linkLoading = true;
@@ -68,6 +99,23 @@
       linkError = e.message || 'Failed to link pointer.';
     }
     linkLoading = false;
+  }
+
+  async function handleScanToLinkPointer() {
+    showLinkPointer = true;
+    linkError = null;
+    try {
+      const result = await BarcodeScanner.scan({formats: [BarcodeFormat.QrCode]});
+      const qr = result.barcodes[0];
+      if (!qr?.rawValue) throw new Error('No QR code detected.');
+      // Try to extract a /qr/[code] or just the code
+      const match = qr.rawValue.match(/qr\/([A-Za-z0-9]+)$/) || qr.rawValue.match(/([A-Za-z0-9]+)$/);
+      if (!match) throw new Error('Unrecognized QR code format.');
+      pointerInput = match[1];
+      handleLinkPointer();
+    } catch (e: any) {
+      linkError = e.message || 'Failed to scan QR code.';
+    }
   }
 </script>
 
@@ -108,6 +156,7 @@
       </ul>
     </Card>
     <div class="action-bar">
+      <button onclick={handleScanMove}>Scan to Move</button>
       <button onclick={() => showMove = !showMove}>Move</button>
       <button onclick={() => showLinkPointer = !showLinkPointer}>Link QR</button>
       <button>Checkout</button>
@@ -115,7 +164,7 @@
     {#if showMove}
       <div class="modal">
         <div class="modal-content">
-          <h3>Select new parent location</h3>
+          <h3 style="margin-bottom: 1rem;">Select new parent location</h3>
           <HierarchyBrowser
             onSelect={(item) => selectedParentId = item.id}
             selectedId={selectedParentId}
@@ -140,6 +189,7 @@
       <div class="modal">
         <div class="modal-content">
           <h3>Link QR Code / Pointer</h3>
+          <button onclick={handleScanToLinkPointer}>Scan</button> or
           <input type="text" placeholder="Enter code or URL" bind:value={pointerInput} style="width: 100%; margin-bottom: 1em;" />
           <div style="margin-top: 1em; display: flex; gap: 1em;">
             <button onclick={handleLinkPointer} disabled={linkLoading || !pointerInput}>
