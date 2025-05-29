@@ -37,6 +37,8 @@
 		"@capacitor/android": "^7.2.0",
 		"@capacitor/cli": "^7.2.0",
 		"@capacitor/core": "^7.2.0",
+		"@capacitor/keyboard": "^7.0.1",
+		"@capacitor/status-bar": "^7.0.1",
 		"@supabase/supabase-js": "^2.49.8",
 		"sqids": "^0.3.0"
 	},

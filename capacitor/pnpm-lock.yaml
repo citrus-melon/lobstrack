@@ -20,6 +20,12 @@ importers:
       '@capacitor/core':
         specifier: ^7.2.0
         version: 7.2.0
+      '@capacitor/keyboard':
+        specifier: ^7.0.1
+        version: 7.0.1(@capacitor/core@7.2.0)
+      '@capacitor/status-bar':
+        specifier: ^7.0.1
+        version: 7.0.1(@capacitor/core@7.2.0)
       '@supabase/supabase-js':
         specifier: ^2.49.8
         version: 2.49.8
@@ -90,6 +96,16 @@ packages:
 
   '@capacitor/core@7.2.0':
     resolution: {integrity: sha512-2zCnA6RJeZ9ec4470o8QMZEQTWpekw9FNoqm5TLc10jeCrhvHVI8MPgxdZVc3mOdFlyieYu4AS1fNxSqbS57Pw==}
+
+  '@capacitor/keyboard@7.0.1':
+    resolution: {integrity: sha512-Gi064vOARMac+x9/DmEFeywN9oAETMf3OYsMuYm9gA8SvdsDJ3QJqMoFnSEIORYXe21Jzt2SIEdLlpT65P/b2g==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+
+  '@capacitor/status-bar@7.0.1':
+    resolution: {integrity: sha512-iDv3mXYo9CdxYRVwt3/pRyuk25p7Sn4GfaS/zMZyVIqTzsvKLCIIH3GdKK+ta+nsNcAVpCw/t5jFEBt1D18ctA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
 
   '@esbuild/aix-ppc64@0.25.4':
     resolution: {integrity: sha512-1VCICWypeQKhVbE9oW/sJaAmjLxhVqacdkvPLEjwlttjfwENRSClS8EjBz0KzRyFSCPDIkuXW34Je/vk7zdB7Q==}
@@ -1567,6 +1583,14 @@ snapshots:
   '@capacitor/core@7.2.0':
     dependencies:
       tslib: 2.8.1
+
+  '@capacitor/keyboard@7.0.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
+
+  '@capacitor/status-bar@7.0.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
 
   '@esbuild/aix-ppc64@0.25.4':
     optional: true
