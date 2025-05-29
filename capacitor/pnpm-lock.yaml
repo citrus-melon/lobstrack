@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@capacitor-mlkit/barcode-scanning':
+        specifier: ^7.2.1
+        version: 7.2.1(@capacitor/core@7.2.0)
       '@capacitor/android':
         specifier: ^7.2.0
         version: 7.2.0(@capacitor/core@7.2.0)
@@ -55,7 +58,7 @@ importers:
         specifier: ^4.0.0
         version: 4.2.1(picomatch@4.0.2)(svelte@5.32.1)(typescript@5.8.3)
       typescript:
-        specifier: ^5.0.0
+        specifier: ^5.5.0
         version: 5.8.3
       typescript-eslint:
         specifier: ^8.20.0
@@ -69,6 +72,11 @@ packages:
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
+
+  '@capacitor-mlkit/barcode-scanning@7.2.1':
+    resolution: {integrity: sha512-zz1TYe//Fw/kx+x3cBDgWlskx3DA0BpXLGGaaEFfq+cP2F/3Bf2Gy/2LAKG+eIzMQ/McGGKMnUC6OpzrDqxwww==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
 
   '@capacitor/android@7.2.0':
     resolution: {integrity: sha512-zdhEy3jZPG5Toe/pGzKtDgIiBGywjaoEuQWnGVjBYPlSAEUtAhpZ2At7V0SCb26yluAuzrAUV0Ue+LQeEtHwFQ==}
@@ -1525,6 +1533,10 @@ snapshots:
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
+
+  '@capacitor-mlkit/barcode-scanning@7.2.1(@capacitor/core@7.2.0)':
+    dependencies:
+      '@capacitor/core': 7.2.0
 
   '@capacitor/android@7.2.0(@capacitor/core@7.2.0)':
     dependencies:
