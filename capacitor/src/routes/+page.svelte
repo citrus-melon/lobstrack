@@ -3,11 +3,12 @@
   import '$lib/global.css';
   import { BarcodeFormat, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
   import { goto } from '$app/navigation';
+  import { PUBLIC_ROOT_ITEM_ID } from '$env/static/public'
 
   // Placeholder data
   let recents = [
-    { id: 1, name: 'Widget A', location: 'Warehouse > Shelf 1' },
-    { id: 2, name: 'Gadget B', location: 'Warehouse > Shelf 2' }
+    { id: 1, name: 'Larry', location: 'Everywhere > Anywhere' },
+    { id: 2, name: 'Data', location: 'My Imagination > Placeholder' }
   ];
 
   let scanning = false;
@@ -57,9 +58,9 @@
 
   <Card title="Actions">
     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <button>Browse</button>
+      <a class="button" href="/item/{PUBLIC_ROOT_ITEM_ID}">Browse</a>
       <button>Scan Multiple</button>
-      <button>Print Labels</button>
+      <a class="button" href="/qr">Print Labels</a>
     </div>
   </Card>
 

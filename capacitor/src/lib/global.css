@@ -24,7 +24,7 @@ h1, h2, h3 {
   color: var(--accent);
   font-weight: 600;
 }
-button {
+button, .button {
   background: var(--accent);
   color: #fff;
   border: none;
@@ -33,9 +33,10 @@ button {
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.15s;
+  text-decoration: none;
 }
-button:hover {
-  background: #17405e;
+button:hover, .button:hover {
+  background: #c40000;
 }
 input {
   border: 1px solid var(--border);
@@ -79,4 +80,8 @@ a {
   padding: 2rem;
   min-width: 350px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+ol, ul {
+  padding-left: 1.5rem;
+
 }
