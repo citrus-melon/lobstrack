@@ -17,4 +17,11 @@ const config: CapacitorConfig = {
   }
 };
 
+if (process.env.CAPACITOR_DEV_SERVER) {
+  config.server = {
+    url: process.env.CAPACITOR_DEV_SERVER,
+    cleartext: true,
+  };
+}
+
 export default config;
