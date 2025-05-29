@@ -119,7 +119,7 @@
   }
 </script>
 
-<main>
+<main style="position: relative">
   {#if !data.item}
     <p>Loading...</p>
   {:else}
@@ -207,4 +207,13 @@
       </div>
     {/if}
   {/if}
+  <a href="/" class="button home-button">Home</a>
 </main>
+
+<style>
+  .home-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+</style>
