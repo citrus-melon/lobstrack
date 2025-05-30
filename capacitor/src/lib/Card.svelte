@@ -35,6 +35,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  position: relative;
 }
 header h2 {
   margin: 0 0 0.5rem 0;

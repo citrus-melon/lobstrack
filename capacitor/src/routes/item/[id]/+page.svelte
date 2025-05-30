@@ -3,11 +3,12 @@
   import '$lib/global.css';
   import { supabase } from '$lib/supabase';
   import HierarchyBrowser from '$lib/HierarchyBrowser.svelte';
-  import { invalidateAll } from '$app/navigation';
+  import { goto, invalidateAll } from '$app/navigation';
   import Sqids from 'sqids';
   import { BarcodeFormat, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
   import type { PageProps } from './$types';
-    import { sqids } from '$lib/sqids';
+  import { sqids } from '$lib/sqids';
+  import LoadingOverlay from '$lib/LoadingOverlay.svelte';
 
   let { data }: PageProps = $props();
 
@@ -20,6 +21,8 @@
   let pointerInput = $state('');
   let linkLoading = $state(false);
   let linkError: string | null = $state(null);
+
+  let createChildLoading = $state(false);
 
   // --- Move logic ---
   async function handleMove(newParentId: string) {
@@ -117,6 +120,23 @@
       linkError = e.message || 'Failed to scan QR code.';
     }
   }
+
+  // --- Create Child logic ---
+  async function handleCreateChild() {
+    createChildLoading = true;
+    try {
+      const { error, data: result } = await supabase
+        .from('items')
+        .insert({ parent: data.item.id, name: 'Untitled' })
+        .select('id')
+        .single();
+      if (error) throw new Error(error.message);
+      await goto(`/item/${result.id}`);
+    } catch (e: any) {
+      alert(`Failed to create child item: ${e.message}`);
+    }
+    createChildLoading = false;
+  }
 </script>
 
 <main style="position: relative">
@@ -144,19 +164,20 @@
       {/await}
     </Card>
     <Card title="Children">
+      <button class="top-right-button" onclick={handleCreateChild}>+ New Child</button>
       {#await data.children}
-        Loading...
+      Loading...
       {:then children}
-        {#if children.length > 0}
-          <ul>
-            {#each children as child}
-              <li><a href={`/item/${child.id}`}>{child.name}</a></li>
+      {#if children.length > 0}
+      <ul>
+        {#each children as child}
+        <li><a href={`/item/${child.id}`}>{child.name}</a></li>
             {/each}
           </ul>
-        {:else}
+          {:else}
           <em>No child items.</em>
-        {/if}
-      {/await}
+          {/if}
+          {/await}
     </Card>
     <Card title="Comments">
       <ul>
@@ -217,9 +238,12 @@
   {/if}
   <a href="/" class="button home-button">Home</a>
 </main>
+{#if createChildLoading}
+  <LoadingOverlay />
+{/if}
 
 <style>
-  .home-button {
+  .home-button, .top-right-button {
     position: absolute;
     top: 1rem;
     right: 1rem;
