@@ -125,30 +125,38 @@
   {:else}
     <h1>{data.item.name}</h1>
     <Card title="Location">
-      <nav aria-label="breadcrumb">
-        <ol style="display: flex; gap: 0.5em; list-style: none; padding: 0; margin: 0;">
-          {#each data.locationHierarchy as loc, i (loc.id)}
-            <li>
-              {#if i < data.locationHierarchy.length - 1}
-                <a href={`/item/${loc.id}`}>{loc.name}</a> &gt;
-              {:else}
-                <strong>{loc.name}</strong>
-              {/if}
-            </li>
-          {/each}
-        </ol>
-      </nav>
+      {#await data.locationHierarchy}
+        Loading...
+      {:then locationHierarchy}
+        <nav aria-label="breadcrumb">
+          <ol style="display: flex; gap: 0.5em; list-style: none; padding: 0; margin: 0;">
+            {#each locationHierarchy as loc, i (loc.id)}
+              <li>
+                {#if i < locationHierarchy.length - 1}
+                  <a href={`/item/${loc.id}`}>{loc.name}</a> &gt;
+                {:else}
+                  <strong>{loc.name}</strong>
+                {/if}
+              </li>
+            {/each}
+          </ol>
+        </nav>
+      {/await}
     </Card>
     <Card title="Children">
-      {#if data.children.length > 0}
-        <ul>
-          {#each data.children as child}
-            <li><a href={`/item/${child.id}`}>{child.name}</a></li>
-          {/each}
-        </ul>
-      {:else}
-        <em>No child items.</em>
-      {/if}
+      {#await data.children}
+        Loading...
+      {:then children}
+        {#if children.length > 0}
+          <ul>
+            {#each children as child}
+              <li><a href={`/item/${child.id}`}>{child.name}</a></li>
+            {/each}
+          </ul>
+        {:else}
+          <em>No child items.</em>
+        {/if}
+      {/await}
     </Card>
     <Card title="Comments">
       <ul>
