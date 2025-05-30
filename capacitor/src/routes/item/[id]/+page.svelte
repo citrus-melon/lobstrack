@@ -24,7 +24,7 @@
 
   let createChildLoading = $state(false);
 
-  let editableName = $state(data.item.name || 'Untitled');
+  let editableName = $derived(data.item.name || 'Untitled');
   let editNameTimeout: ReturnType<typeof setTimeout> | null = null;
 
   function handleNameInput(e: Event) {
@@ -32,21 +32,21 @@
     editNameTimeout = setTimeout(saveEditName, 1200); // Save after 1.2s inactivity
   }
 
-  function handleNameBlur() {
+  async function handleNameBlur() {
     if (editNameTimeout) clearTimeout(editNameTimeout);
-    saveEditName();
+    await saveEditName();
+    if (editableName !== data.item.name) await invalidateAll();
   }
 
   async function saveEditName() {
     const trimmed = editableName.trim();
-    if (!trimmed || trimmed === data.item.name) return;
+    if (!trimmed) return;
     try {
       const { error: updateErr } = await supabase
         .from('items')
         .update({ name: trimmed })
         .eq('id', data.item.id);
       if (updateErr) throw new Error(updateErr.message);
-      await invalidateAll();
     } catch (e: any) {
       alert(`Failed to update name: ${e.message}`);
     }
