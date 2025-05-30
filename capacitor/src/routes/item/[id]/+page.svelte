@@ -165,6 +165,27 @@
     }
     createChildLoading = false;
   }
+
+  let showDeleteConfirm = $state(false);
+  let deleteLoading = $state(false);
+  let deleteError: string | null = $state(null);
+
+  async function handleDelete() {
+    deleteLoading = true;
+    deleteError = null;
+    try {
+      const { error: delErr } = await supabase
+        .from('items')
+        .delete()
+        .eq('id', data.item.id);
+      if (delErr) throw new Error(delErr.message);
+      await goto(data.item.parent ? `/item/${data.item.parent}` : '/');
+      showDeleteConfirm = false;
+    } catch (e: any) {
+      deleteError = e.message || 'Failed to delete item.';
+    }
+    deleteLoading = false;
+  }
 </script>
 
 <main style="position: relative">
@@ -222,8 +243,26 @@
       <button onclick={handleScanMove}>Scan to Move</button>
       <button onclick={() => showMove = !showMove}>Move</button>
       <button onclick={() => showLinkPointer = !showLinkPointer}>Link QR</button>
+      <button onclick={() => showDeleteConfirm = true}>Delete</button>
       <button>Checkout</button>
     </div>
+    {#if showDeleteConfirm}
+      <div class="modal">
+        <div class="modal-content">
+          <h3 style="margin-bottom: 1em;">Delete Item?</h3>
+          <p>Are you sure you want to delete <strong>{data.item.name}</strong>? This cannot be undone.</p>
+          <div style="display: flex; gap: 1em; margin-top: 1em;">
+            <button onclick={handleDelete} disabled={deleteLoading}>
+              {deleteLoading ? 'Deleting...' : 'Delete'}
+            </button>
+            <button onclick={() => showDeleteConfirm = false} disabled={deleteLoading}>Cancel</button>
+          </div>
+          {#if deleteError}
+            <p style="color: red">{deleteError}</p>
+          {/if}
+        </div>
+      </div>
+    {/if}
     {#if showMove}
       <div class="modal">
         <div class="modal-content">
