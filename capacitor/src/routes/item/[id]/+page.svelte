@@ -204,7 +204,7 @@
         Loading...
       {:then locationHierarchy}
         <nav aria-label="breadcrumb">
-          <ol style="display: flex; gap: 0.5em; list-style: none; padding: 0; margin: 0;">
+          <ol style="display: flex; flex-flow: wrap; gap: 0.5em; list-style: none; padding: 0;">
             {#each locationHierarchy as loc, i (loc.id)}
               <li>
                 {#if i < locationHierarchy.length - 1}
