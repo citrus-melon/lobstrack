@@ -24,6 +24,34 @@
 
   let createChildLoading = $state(false);
 
+  let editableName = $state(data.item.name || 'Untitled');
+  let editNameTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  function handleNameInput(e: Event) {
+    if (editNameTimeout) clearTimeout(editNameTimeout);
+    editNameTimeout = setTimeout(saveEditName, 1200); // Save after 1.2s inactivity
+  }
+
+  function handleNameBlur() {
+    if (editNameTimeout) clearTimeout(editNameTimeout);
+    saveEditName();
+  }
+
+  async function saveEditName() {
+    const trimmed = editableName.trim();
+    if (!trimmed || trimmed === data.item.name) return;
+    try {
+      const { error: updateErr } = await supabase
+        .from('items')
+        .update({ name: trimmed })
+        .eq('id', data.item.id);
+      if (updateErr) throw new Error(updateErr.message);
+      await invalidateAll();
+    } catch (e: any) {
+      alert(`Failed to update name: ${e.message}`);
+    }
+  }
+
   // --- Move logic ---
   async function handleMove(newParentId: string) {
     moveLoading = true;
@@ -143,7 +171,13 @@
   {#if !data.item}
     <p>Loading...</p>
   {:else}
-    <h1>{data.item.name}</h1>
+    <h1
+      contenteditable
+      bind:textContent={editableName}
+      class="editable-heading"
+      oninput={handleNameInput}
+      onblur={handleNameBlur}
+    ></h1>
     <Card title="Location">
       {#await data.locationHierarchy}
         Loading...
@@ -247,5 +281,18 @@
     position: absolute;
     top: 1rem;
     right: 1rem;
+  }
+
+  .editable-heading {
+    border-radius: var(--radius);
+    min-width: 4em;
+    outline: none;
+  }
+  .editable-heading:focus {
+    padding: 0.2rem 0.5rem;
+    background-color: white;
+    border: 1px solid var(--accent);
+    max-width: 80%;
+    word-break: break-word;
   }
 </style>
