@@ -13,7 +13,9 @@ The original goal of this project is to remove the friction in the process of up
 - [x] Scanning/generation of serialized QR code stickers
   - [x] Quickly identify and perform operations on items (such as updating location) by scanning
   - [ ] Double as "Property of / if found please return" labels
+  - [ ] Personalize sticker format
 - [ ] Attach notes, details, and files to items
+- [ ] Allow integrations to provide additional item info
 - [ ] Find items with full-text search
 - [x] Easily share and reference items by link with web interface
 - [ ] Track version history and audit log
