@@ -15,55 +15,20 @@
         const parser = new DOMParser();
         const svgDocument = parser.parseFromString(templateString, "image/svg+xml");
 
-        // replace {url} in text nodes with url
-        const textNodes = svgDocument.querySelectorAll("text");
-        textNodes.forEach(node => {
-            node.innerHTML = node.innerHTML || "";
-            node.innerHTML = node.innerHTML.replace("{url}", "https://example.com");
-            node.innerHTML = node.innerHTML.replace("{code}", "asdf");
-        });
+        const items = [];
 
-        // generate QR code and replace rectangles containing <title> contain "qr" with the QR code image
-        const potentialQrRectangles = svgDocument.querySelectorAll("rect:has(> title)")
-        for (const rectangle of potentialQrRectangles) {
-            if (rectangle.textContent?.includes("qr")) {
-                const x = rectangle.getAttribute("x");
-                const y = rectangle.getAttribute("y");
-                const width = rectangle.getAttribute("width");
-                const height = rectangle.getAttribute("height");
-                const fill = rectangle.getAttribute("fill");
-
-                // generate QR code image
-                const qrCodeSvg = await QRCode.toString("https://example.com", { 
-                    type: "svg",
-                    margin: 0,
-                    color: {
-                        dark: fill || undefined,
-                        light: "#00000000" // transparent background
-                    }
-                });
-
-                const qrCodeElement = parser.parseFromString(qrCodeSvg, "image/svg+xml").documentElement;
-
-                qrCodeElement.setAttribute("x", x || "");
-                qrCodeElement.setAttribute("y", y || "");
-                qrCodeElement.setAttribute("width", width || "");
-                qrCodeElement.setAttribute("height", height || "");
-                
-                // replace rectangle with QR code image
-
-                rectangle.replaceWith(qrCodeElement);
-            }
+        for (const itemElement in svgDocument.querySelectorAll("[inkscape\\:label='")) {
+            items.push({
+                itemElement,
+            })
         }
-
-        return svgDocument.documentElement.outerHTML;
     }
 
     async function generate() {
         const templateString = await templateFiles?.[0].text();
         if (!templateString) throw new Error("No template file selected");
 
-        iframeContent = await populateTemplate(templateString);
+        // iframeContent = await populateTemplate(templateString);
         iframe.contentWindow?.print();
     }
 </script>
