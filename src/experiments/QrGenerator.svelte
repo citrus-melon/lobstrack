@@ -7,7 +7,6 @@
 <script lang="ts">
     import { sqids } from '$lib/sqids';
     import { parseTemplate, populateTemplate } from '$lib/qrGenerator';
-    import { start } from 'repl';
 
     let baseUrl: string = location.origin;
     let startId: number = 0;

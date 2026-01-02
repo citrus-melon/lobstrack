@@ -51,7 +51,7 @@ export async function populateTemplate(template: Template, itemSqids: string[], 
     for (const itemElement of itemElements) {
         const itemSqid = itemSqids.shift()!;
 
-        const qrPlaceholders = itemElement.querySelectorAll("[rect|label='qr']");
+        const qrPlaceholders = itemElement.querySelectorAll("rect[*|label='qr']");
         for (const qrPlaceholder of qrPlaceholders) {
             // Extract attributes from placeholder
             if (qrPlaceholder instanceof SVGElement === false) throw new Error("QR code placeholder is not an SVG element");
