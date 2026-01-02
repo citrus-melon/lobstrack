@@ -88,5 +88,5 @@ export async function populateTemplate(template: Template, itemSqids: string[], 
         }
     }
 
-    return svgDocument.documentElement.outerHTML;
+    return svgDocument.documentElement;
 }

@@ -7,6 +7,7 @@
 <script lang="ts">
     import { sqids } from '$lib/sqids';
     import { parseTemplate, populateTemplate } from '$lib/qrGenerator';
+    import printableWrapper from './qr-printable-wrapper.html?raw';
 
     let baseUrl: string = location.origin;
     let startId: number = 0;
@@ -14,6 +15,11 @@
     let iframeContent: string = "";
     let iframe: HTMLIFrameElement;
 
+    function createIframeContent(populatedTemplates: Element[]) {
+        const doc = new DOMParser().parseFromString(printableWrapper, "text/html");
+        doc.body.append(...populatedTemplates);
+        return doc.documentElement.outerHTML;
+    }
 
     async function generate() {
         try {
@@ -29,10 +35,10 @@
 
             const populatedTemplate = await populateTemplate(template, itemSqids, new URL(baseUrl));
     
-            iframeContent = populatedTemplate;
+            iframeContent = createIframeContent([populatedTemplate]);
             startId += template.itemCount;
-            // iframe.contentWindow?.print();
         } catch (e: any) {
+            console.error(e);
             alert(e.message || "Failed to generate QR codes.");
         }
     }
