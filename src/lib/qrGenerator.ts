@@ -57,6 +57,7 @@ export async function populateTemplate(template: Template, itemSqids: string[], 
             if (qrPlaceholder instanceof SVGElement === false) throw new Error("QR code placeholder is not an SVG element");
             const x = qrPlaceholder.getAttribute("x");
             const y = qrPlaceholder.getAttribute("y");
+            const transform = qrPlaceholder.getAttribute("transform");
             const width = qrPlaceholder.getAttribute("width");
             const height = qrPlaceholder.getAttribute("height");
             const strokeHex = rgbToHex(qrPlaceholder.style.stroke);
@@ -77,7 +78,7 @@ export async function populateTemplate(template: Template, itemSqids: string[], 
             if (y) qrCodeElement.setAttribute("y", y);
             if (width) qrCodeElement.setAttribute("width", width);
             if (height) qrCodeElement.setAttribute("height", height);
-
+            if (transform) qrCodeElement.setAttribute("transform", transform);
             qrPlaceholder.replaceWith(qrCodeElement);
         }
         
